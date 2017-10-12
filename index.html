@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Snake Arena</title>
+    <style>
+        #board {
+            display: flex;
+            flex-direction: row;
+        }
+
+        #players {
+            margin-left: 10px;
+            border: 1px solid black;
+            min-width: 200px;
+        }
+
+        .player-row {
+            display: flex;
+            flex-direction: row;
+            padding: 5px;
+            border-bottom: 1px solid black;
+        }
+
+        .player-name {
+            flex: 1;
+        }
+
+        .player-score {
+            width: 100px;
+            text-align: end;
+            font-weight: bold;
+        }
+
+        #menu div {
+            margin-bottom: 10px;
+        }
+
+        *[hidden=true] {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+<h1>Snake Arena</h1>
+
+<div id="menu">
+    <div>
+        <label>Name:</label>
+        <input id="userName" width="200px"/>
+    </div>
+    <div>
+        <label>Speed:</label>
+        <input id="speed" width="100px" type="number" min="1" max="20"/>
+        <button id="start">Start Server</button>
+    </div>
+    <div>
+        <label>Host:</label>
+        <input id="host" width="200px"/>
+        <button id="connect">Connect</button>
+    </div>
+</div>
+
+<div id="board" hidden="true">
+    <canvas id="canvas"></canvas>
+    <div id="players"></div>
+</div>
+
+<script>
+    require('./src/app.js')
+</script>
+
+</body>
+</html>
