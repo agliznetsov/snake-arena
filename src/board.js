@@ -39,7 +39,7 @@ class Board {
                 snake.reset(
                     Math.ceil(Math.random() * this.width),
                     Math.ceil(Math.random() * this.height),
-                    10);
+                    2);
             } else {
                 this.checkApples(snake);
             }
@@ -113,13 +113,13 @@ class Board {
 
     addPlayer(name) {
         let id = ++counter;
-        let color = game.COLORS[id % game.COLORS.length];
+        let color = game.COLORS[(id - 1) % game.COLORS.length];
         this.players.push(new Player(id, color, name));
         let snake = new Snake(id, color);
         snake.reset(
             Math.ceil(Math.random() * this.width),
             Math.ceil(Math.random() * this.height),
-            10);
+            2);
         this.snakes.push(snake);
         return id;
     }

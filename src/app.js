@@ -5,6 +5,7 @@ const Board = require("./board");
 const d3 = require('d3');
 const webSocket = require('websocket');
 const http = require('http');
+const _ = require('lodash');
 
 const PORT = 2525;
 const CELL_SIZE = 20;
@@ -18,22 +19,15 @@ const store = new Store({
 let clients;
 let board;
 let snake;
+let clientConnection;
 
 function onKeyDown(e) {
-    // console.log(e.key);
     if (snake) {
-        if (e.key === "ArrowUp") {
-            snake.goUp();
-        } else if (e.key === "ArrowDown") {
-            snake.goDown();
-        } else if (e.key === "ArrowLeft") {
-            snake.goLeft();
-        } else if (e.key === "ArrowRight") {
-            snake.goRight();
-        }
+        snake.turn(e.key);
+    } else if (clientConnection) {
+        clientConnection.sendUTF("turn:" + e.key);
     }
 }
-
 
 function draw() {
     if (board) {
@@ -92,8 +86,9 @@ function displayStats() {
         let container = d3.select('#players');
         container.selectAll("*").remove();
 
-        for (let p of board.players) {
-            let row = container.append("div").classed("player-row", true);
+        let sorted = _.orderBy(board.players, ["score"], ["desc"]);
+        for (let p of sorted) {
+            let row = container.append("div").classed("player-row", true).style("background-color", p.color);
             row.append("div").classed("player-name", true).text(p.name);
             row.append("div").classed("player-score", true).text(p.score);
         }
@@ -118,7 +113,7 @@ function connect() {
     saveConfig();
     console.log("connect");
 
-    var client = new webSocket.client();
+    let client = new webSocket.client();
 
     client.on('connectFailed', function (error) {
         console.error(error);
@@ -126,6 +121,7 @@ function connect() {
 
     client.on('connect', function (connection) {
         console.log("connected");
+        clientConnection = connection;
         showBoard();
 
         connection.on('error', function (error) {
@@ -137,12 +133,11 @@ function connect() {
         });
 
         connection.on('message', function (message) {
-            console.log('Message', message.type);
             try {
                 let json = JSON.parse(message.utf8Data);
                 board = Board.fromJson(json);
             } catch (e) {
-                console.error(e);
+                console.error("invalid json", message.utf8Data);
             }
         });
 
@@ -160,13 +155,7 @@ function start() {
     clients = [];
     board = new Board(30, 20, 3);
     board.addPlayer(store.get("userName"));
-    board.addPlayer(store.get("userName"));
-    board.addPlayer(store.get("userName"));
-    board.addPlayer(store.get("userName"));
     snake = board.snakes[0];
-
-    // const fs = require('fs');
-    // fs.writeFileSync("c:/tmp/board.json", JSON.stringify(board));
 
     let server = http.createServer(function (request, response) {
     });
@@ -186,14 +175,13 @@ function start() {
 
         connection.on('message', function (message) {
             if (message.type === 'utf8') {
-                console.log("Received: '" + message.utf8Data + "'");
                 let arr = message.utf8Data.split(":");
                 if (arr[0] === "player") {
                     id = board.addPlayer(arr[1]);
-                } else if (arr[0] === "move") {
+                } else if (arr[0] === "turn") {
                     if (id >= 0) {
                         let snake = board.getSnake(id);
-                        //moveSnake(snake, arr[1]);
+                        snake.turn(arr[1]);
                     }
                 }
             }

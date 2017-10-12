@@ -60,29 +60,26 @@ class Snake {
         this.segments.push({x: tail.h, y: tail.y});
     }
 
-    goUp() {
-        if (this.direction !== Direction.DOWN) {
-            this.direction = Direction.UP;
+    turn(key) {
+        if (key === "ArrowUp") {
+            if (this.direction !== Direction.DOWN) {
+                this.direction = Direction.UP;
+            }
+        } else if (key === "ArrowDown") {
+            if (this.direction !== Direction.UP) {
+                this.direction = Direction.DOWN;
+            }
+        } else if (key === "ArrowLeft") {
+            if (this.direction !== Direction.RIGHT) {
+                this.direction = Direction.LEFT;
+            }
+        } else if (key === "ArrowRight") {
+            if (this.direction !== Direction.LEFT) {
+                this.direction = Direction.RIGHT;
+            }
         }
     }
 
-    goDown() {
-        if (this.direction !== Direction.UP) {
-            this.direction = Direction.DOWN;
-        }
-    }
-
-    goLeft() {
-        if (this.direction !== Direction.RIGHT) {
-            this.direction = Direction.LEFT;
-        }
-    }
-
-    goRight() {
-        if (this.direction !== Direction.LEFT) {
-            this.direction = Direction.RIGHT;
-        }
-    }
 }
 
 module.exports = Snake;
