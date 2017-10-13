@@ -39,7 +39,7 @@ class Board {
                 snake.reset(
                     Math.ceil(Math.random() * this.width),
                     Math.ceil(Math.random() * this.height),
-                    2);
+                    1);
             } else {
                 this.checkApples(snake);
             }
@@ -82,7 +82,7 @@ class Board {
             if (a.x === h.x && a.y === h.y) {
                 this.apples.splice(i, 1);
                 snake.grow();
-                let score = Math.pow(snake.size() - 1, 2);
+                let score = snake.size();
                 let players = _.filter(this.players, {id: snake.id});
                 players[0].score += score;
                 break;
@@ -151,7 +151,6 @@ class Board {
                 y: Math.floor(Math.random() * this.height)
             };
             if (this.isEmpty(cell)) {
-                console.log("add apple", cell);
                 this.apples.push(cell);
                 break;
             }

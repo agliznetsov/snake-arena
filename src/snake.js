@@ -15,7 +15,7 @@ class Snake {
     }
 
     reset(x, y, size) {
-        this.direction = Direction.RIGHT;
+        this.direction = Direction.NONE;
         this.segments = [];
         for (let i = 0; i < size; i++) {
             this.segments.push({x: x - i, y: y});
